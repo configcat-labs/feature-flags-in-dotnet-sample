@@ -25,6 +25,13 @@ public sealed class ConfigCatConfigurationSource : IConfigurationSource
     public TimeSpan? MaxInitWaitTime { get; set; }
 
     /// <summary>
+    /// Specifies whether to throw a <see cref="TimeoutException"/> during initialization, thereby terminating the application,
+    /// if the config data cannot be obtained within the configured <see cref="MaxInitWaitTime"/>.
+    /// (Defaults to <see langword="false"/>, in which case an error message will only be logged.)
+    /// </summary>
+    public bool ThrowOnInitFailure { get; set; }
+
+    /// <summary>
     /// Controls whether to use case-insensitive key matching (as most configuration sources do), despite ConfigCat keys being case-sensitive.
     /// (Default value is <see langword="false"/>.)
     /// </summary>

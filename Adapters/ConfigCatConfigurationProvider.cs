@@ -1,5 +1,6 @@
 using System.Globalization;
 using ConfigCat.Client;
+using ConfigCat.Client.Configuration;
 
 namespace ConfigCatInDotnetSample.Adapters;
 
@@ -9,6 +10,7 @@ namespace ConfigCatInDotnetSample.Adapters;
 public sealed class ConfigCatConfigurationProvider : ConfigurationProvider, IDisposable
 {
     private readonly StringComparer _keyComparer;
+    private readonly bool _throwOnInitFailure;
     private readonly bool _reloadOnChange;
     private bool _isReload;
     private readonly Lock _reloadLock = new();
@@ -22,6 +24,7 @@ public sealed class ConfigCatConfigurationProvider : ConfigurationProvider, IDis
     {
         _keyComparer = source.CaseInsensitiveKeys ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
 
+        _throwOnInitFailure = source.ThrowOnInitFailure;
         _reloadOnChange = source.ReloadOnChange;
 
         _loggingReadyNotifier = source.LoggingReadyNotifier;
@@ -69,7 +72,28 @@ public sealed class ConfigCatConfigurationProvider : ConfigurationProvider, IDis
         Load(snapshot);
         _initialSnapshot = snapshot;
 
-        return cacheState != ClientCacheState.NoFlagData;
+        if (cacheState == ClientCacheState.NoFlagData)
+        {
+            var message = new FormattableLogMessage($"Failed to obtain ConfigCat config data within {nameof(AutoPoll.MaxInitWaitTime)}.");
+
+            if (_throwOnInitFailure)
+            {
+                throw new TimeoutException(message.InvariantFormattedMessage);
+            }
+
+            if (_loggerAdapter is not null)
+            {
+                _loggerAdapter.Log(ConfigCat.Client.LogLevel.Error, 0, ref message);
+            }
+            else
+            {
+                Console.Error.WriteLine(message.InvariantFormattedMessage);
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     private void HandleConfigChanged(object? sender, EventArgs e)
