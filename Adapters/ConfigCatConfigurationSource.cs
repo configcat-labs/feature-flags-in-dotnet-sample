@@ -32,7 +32,7 @@ public sealed class ConfigCatConfigurationSource : IConfigurationSource
     public bool ThrowOnInitFailure { get; set; }
 
     /// <summary>
-    /// Controls whether to use case-insensitive key matching (as most configuration sources do), despite ConfigCat keys being case-sensitive.
+    /// Controls whether to use case-insensitive key matching (as most configuration providers do), despite ConfigCat keys being case-sensitive.
     /// (Default value is <see langword="false"/>.)
     /// </summary>
     public bool CaseInsensitiveKeys { get; set; }

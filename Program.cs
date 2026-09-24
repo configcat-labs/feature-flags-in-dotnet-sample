@@ -11,7 +11,7 @@ var loggingReadyNotifier = new LoggingReadyNotifier();
 // at the right position; see also https://learn.microsoft.com/en-us/dotnet/core/extensions/generic-host#host-builder-settings)
 builder.Configuration.AddConfigCat(source =>
 {
-    // Populate configuration source options from the currently available configuration (e.g., from appsettings.json)
+    // Populate options from the currently available configuration (e.g., from appsettings.json)
     builder.Configuration.GetSection("ConfigCat:ConfigurationSource").Bind(source);
 
     // Enable case-insensitive matching for ConfigCat SDK Keys, which are case-sensitive by default
@@ -34,7 +34,7 @@ builder.Logging.AddConsole();
 // Build the application instance along with its underlying DI container
 var app = builder.Build();
 
-// Notify the ConfigCat configuration source that the logging infrastructure is now available
+// Notify the ConfigCat configuration provider that the logging infrastructure is now available
 loggingReadyNotifier.Notify(app.Services.GetRequiredService<ILoggerFactory>());
 
 // Configure the request pipeline

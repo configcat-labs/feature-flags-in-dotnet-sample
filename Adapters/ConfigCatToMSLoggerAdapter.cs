@@ -12,8 +12,8 @@ public sealed class ConfigCatToMSLoggerAdapter : IConfigCatLogger
 {
     // Based on: https://github.com/configcat/.net-sdk/blob/v10.0.0/src/ConfigCat.Extensions.Hosting/Adapters/ConfigCatToMSLoggerAdapter.cs
 
-    // Implementing a configuration source that logs to the application's logging infrastructure is tricky
-    // because the configuration source must be registered before the DI container is built. As a workaround,
+    // Implementing a configuration provider that logs to the application's logging infrastructure is tricky
+    // because the provider must be registered before the DI container is built. As a workaround,
     // we buffer the log events in memory until the logger instance can be resolved from the DI container.
 
     private readonly List<LogEvent> _deferredEvents = new();
